@@ -3,29 +3,43 @@ package com.imd.supermercado.model;
 import com.imd.supermercado.security.RoleEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "users")
 public class UserEntity implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
 
     @NotNull
-    String login;
+    private String login;
 
     @NotNull
-    String password;
+    private String password;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    RoleEnum role;
+    private RoleEnum role;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", referencedColumnName = "id")
+    private ClienteEntity cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "empresa_id", referencedColumnName = "id")
+    private EmpresaEntity empresa;
+
+    public UserEntity() {}
 
     public UserEntity(String login, String password, RoleEnum role) {
         this.login = login;
@@ -33,16 +47,57 @@ public class UserEntity implements UserDetails {
         this.role = role;
     }
 
-    public UserEntity(){}
+    public Long getId() {
+        return id;
+    }
 
+    public ClienteEntity getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(ClienteEntity cliente) {
+        this.cliente = cliente;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+    public EmpresaEntity getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(EmpresaEntity empresa) {
+        this.empresa = empresa;
+    }
+
+    public RoleEnum getRole() {
+        return role;
+    }
+
+    public void setRole(RoleEnum role) {
+        this.role = role;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(role == RoleEnum.ADMIN){
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        }else{
-            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        if (role == RoleEnum.ADMIN) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
         }
+
+        if (role == RoleEnum.EMPRESA) {
+            return List.of(new SimpleGrantedAuthority("ROLE_EMPRESA"));
+        }
+
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
