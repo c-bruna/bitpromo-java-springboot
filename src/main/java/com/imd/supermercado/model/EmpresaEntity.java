@@ -3,8 +3,6 @@ package com.imd.supermercado.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
