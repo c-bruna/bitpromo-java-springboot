@@ -7,4 +7,3 @@ public record RegistrarDTO(
         String password,
         RoleEnum role) {
 }
-

@@ -1,22 +1,62 @@
 package com.imd.supermercado.DTO;
 
-import com.imd.supermercado.model.ClienteEntity;
-import org.hibernate.validator.constraints.br.CPF;
-import jakarta.validation.constraints.NotNull;
-
 import java.util.Date;
 
-public record ClienteDTO(
-        @NotNull
-        String nome,
+public class ClienteDTO {
 
-        @NotNull
-        @CPF(message = "Digite um CPF válido")
-        String cpf,
+    private String nome;
+    private String cpf;
+    private Date dataNascimento;
+    private String email;
+    private String senha;
 
-        @NotNull
-        Date dataNascimento,
+    public ClienteDTO() {}
 
-        @NotNull
-        ClienteEntity.Genero genero) {
+    public ClienteDTO(String nome, String cpf, Date dataNascimento, String email, String senha) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.dataNascimento = dataNascimento;
+        this.email = email;
+        this.senha = senha;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public Date getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(Date dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
 }
