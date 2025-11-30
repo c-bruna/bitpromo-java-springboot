@@ -63,4 +63,12 @@ public class ProdutoService {
         produtoRepository.deleteById(id);
         return true;
     }
+
+    public List<ProdutoEntity> buscarProdutos(String nome, Double precoMin, Double precoMax) {
+        if (nome == null) nome = "";
+        if (precoMin == null) precoMin = 0.0;
+        if (precoMax == null) precoMax = Double.MAX_VALUE;
+
+        return produtoRepository.findByNomeProdutoContainingIgnoreCaseAndPrecoBetween(nome, precoMin, precoMax);
+    }
 }

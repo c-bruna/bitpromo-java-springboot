@@ -1,7 +1,6 @@
 package com.imd.supermercado.controllers;
 
 import com.imd.supermercado.DTO.ProdutoDTO;
-import com.imd.supermercado.model.ProdutoEntity;
 import com.imd.supermercado.services.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

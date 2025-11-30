@@ -1,0 +1,199 @@
+
+        body {
+            padding-top: 130px;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f8;
+        }
+
+        .top-bar {
+            background-color: #ff9900;
+            color: white;
+            padding: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .navbar-main {
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .search-bar {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .search-input {
+            border-radius: 0.375rem 0 0 0.375rem;
+            border-right: none;
+        }
+
+        .search-btn {
+            border-radius: 0 0.375rem 0.375rem 0;
+        }
+
+        .sidebar {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 8px 0;
+            color: #333;
+            text-decoration: none;
+            border-bottom: 1px dashed #eee;
+            transition: color 0.2s;
+        }
+
+        .sidebar a:hover {
+            color: #007bff;
+        }
+
+        .produto {
+            text-align: center;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            height: 100%;
+            border: 1px solid #eee;
+            position: relative;
+        }
+
+        .produto:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .produto img {
+            max-height: 180px;
+            object-fit: contain;
+            width: 100%;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .preco-promocao {
+            font-size: 1.3rem;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .preco-original {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-decoration: line-through;
+        }
+
+        .badge-promocao {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .cupons-section {
+            background: #e0f7fa;
+            padding: 30px 0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .cupom-card {
+            background: white;
+            border: 2px dashed #007bff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .cupom-card:hover {
+            background: #f0f8ff;
+        }
+
+        #loginModal .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+            border: none;
+            background: linear-gradient(145deg, #ffffff, #f0f4f8);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        #loginModal .modal-content:hover {
+            transform: translateY(-5px);
+        }
+
+        #loginModal .modal-header {
+            background: #007bff;
+            color: white;
+            border-bottom: none;
+            justify-content: center;
+            padding: 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        #loginModal .modal-header .btn-close {
+            filter: invert(1);
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        #loginModal .modal-header .btn-close:hover {
+            opacity: 1;
+        }
+
+        #loginModal .modal-body {
+            padding: 2rem 1.5rem;
+            background: #f8f9fa;
+        }
+
+        #loginModal .card {
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #ffffff, #e9f2ff);
+        }
+
+        #loginModal .card h4 {
+            color: #007bff;
+            font-weight: 700;
+        }
+
+        #loginModal .card .btn-primary {
+            background: #007bff;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        #loginModal .card .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        #loginModal .card .btn-secondary {
+            background: #6c757d;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        #loginModal .card .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        #loginModal .card .btn-success {
+            background: #28a745;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        #loginModal .card .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+   

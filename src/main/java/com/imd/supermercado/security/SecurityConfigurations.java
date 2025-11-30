@@ -38,6 +38,8 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/produto/salvar").hasAnyRole("ADMIN", "EMPRESA")
                         .requestMatchers(HttpMethod.PUT, "/produto/atualizar").hasAnyRole("ADMIN", "EMPRESA")
                         .requestMatchers(HttpMethod.DELETE, "/produto/deletar").hasAnyRole("ADMIN", "EMPRESA")
+                        .requestMatchers("/pagina-inicial/**").permitAll()
+                         .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                         .anyRequest().permitAll() 
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

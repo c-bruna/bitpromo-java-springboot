@@ -46,7 +46,7 @@ api.security.token.secret=minha_chave_secreta
 ./mvnw spring-boot:run
 ```
 
-A API estará disponível em: `http://localhost:8080`.
+A APLICACÂO estará disponível em: `http://localhost:8080`.
 
 ---
 
