@@ -37,6 +37,17 @@ public class AuthenticationController {
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
+    @GetMapping("/login/{login}")
+    public ResponseEntity<?> buscarPorLogin(@PathVariable String login) {
+        UserEntity user = (UserEntity) repository.findByLogin(login);
+
+        if (user == null) {
+            return ResponseEntity.status(404).body("Usuário não encontrado");
+        }
+
+        return ResponseEntity.ok(user);
+    }
+
     @PostMapping("/registrar")
     public ResponseEntity registra(@RequestBody RegistrarDTO registrarDTO){
         if(this.repository.findByLogin(registrarDTO.login()) != null){
