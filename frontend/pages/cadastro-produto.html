@@ -57,9 +57,9 @@
 
 <script>
 const empresaId = localStorage.getItem("empresaId");
+const token = localStorage.getItem("token");
 
-// Se não estiver logado
-if (!empresaId) {
+if (!empresaId || !token) {
     alert("Você precisa estar logada como empresa!");
     window.location.href = "login-empresa.html";
 }
@@ -76,19 +76,34 @@ document.getElementById("formProduto").addEventListener("submit", async (e) => {
         empresaId: empresaId
     };
 
-    const resposta = await fetch(`http://localhost:8080/produto/salvar/${empresaId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dto)
-    });
+    try {
+        const resposta = await fetch(`http://localhost:8080/produto/salvar/${empresaId}`, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": token 
+            },
+            body: JSON.stringify(dto)
+        });
 
-    if (resposta.ok) {
+        if (resposta.ok) {
+            document.getElementById("mensagem").innerHTML =
+                `<div class="alert alert-success">Produto cadastrado!</div>`;
+            e.target.reset();
+        } else if (resposta.status === 401 || resposta.status === 403) {
+            document.getElementById("mensagem").innerHTML =
+                `<div class="alert alert-warning">Não autorizado. Faça login novamente.</div>`;
+            localStorage.removeItem("token");
+            localStorage.removeItem("empresaId");
+            setTimeout(() => window.location.href = "login-empresa.html", 2000);
+        } else {
+            document.getElementById("mensagem").innerHTML =
+                `<div class="alert alert-danger">Erro ao cadastrar!</div>`;
+        }
+    } catch (erro) {
         document.getElementById("mensagem").innerHTML =
-            `<div class="alert alert-success">Produto cadastrado!</div>`;
-        e.target.reset();
-    } else {
-        document.getElementById("mensagem").innerHTML =
-            `<div class="alert alert-danger">Erro ao cadastrar!</div>`;
+            `<div class="alert alert-danger">Erro de conexão!</div>`;
+        console.error(erro);
     }
 });
 </script>
