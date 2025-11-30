@@ -84,10 +84,3 @@ http://localhost:3000/frontend/
 * **Servidor local frontend:** `serve` (Node.js)
 
 ```
-
----
-
-Se você quiser, posso criar uma **versão ainda mais enxuta e elegante**, tipo documentação “profissional” que ficaria ótima no GitHub, com badges, links rápidos para login e cadastro, e estilo visual limpo.  
-
-Quer que eu faça essa versão?
-```
