@@ -17,44 +17,45 @@ public class ProdutoController {
     @Autowired
     ProdutoService produtoService;
 
-    // postProduto
-    @PostMapping("/salvar")
-    public ResponseEntity<ProdutoEntity> salvarProduto(@RequestBody @Valid ProdutoDTO produtoDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.salvarProduto(produtoDTO));
+    @PostMapping("/salvar/{empresaId}")
+    public ResponseEntity<?> salvarProduto(
+            @RequestBody @Valid ProdutoDTO dto,
+            @PathVariable Long empresaId
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(produtoService.salvarProduto(dto, empresaId));
     }
 
-    // getById
     @GetMapping("/{id}")
     public ResponseEntity<Object> buscarProduto(@PathVariable Long id) {
         var produto = produtoService.buscarProduto(id);
         if (produto == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não localizado");
         }
-        return ResponseEntity.ok().body(produto);
+        return ResponseEntity.ok(produto);
     }
 
-    // getAll
-    @GetMapping("/produtos")
+    @GetMapping("/todos")
     public ResponseEntity<Object> buscarProdutos() {
-        return ResponseEntity.ok().body(produtoService.buscarProdutos());
+        return ResponseEntity.ok(produtoService.buscarProdutos());
     }
 
-    @GetMapping("/produtos_ativos")
-    public ResponseEntity<Object> buscarProdutosAtivos() {
-        return ResponseEntity.ok().body(produtoService.buscarProdutosAtivos());
+    @GetMapping("/empresa/{empresaId}")
+    public ResponseEntity<Object> buscarPorEmpresa(@PathVariable Long empresaId) {
+        return ResponseEntity.ok(produtoService.buscarProdutosPorEmpresa(empresaId));
     }
 
-    // putProduto
-    @PutMapping("/atualizar/{id}")
-    public ResponseEntity<Object> atualizarProduto(@PathVariable Long id, @RequestBody ProdutoDTO produtoDTO) {
-        var produto = produtoService.atualizarProduto(produtoDTO, id);
-        if (produto == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não localizado");
-        }
-        return ResponseEntity.ok().body(produto);
+    @PutMapping("/atualizar/{id}/{empresaId}")
+    public ResponseEntity<?> atualizarProduto(
+            @PathVariable Long id,
+            @PathVariable Long empresaId,
+            @RequestBody ProdutoDTO dto
+    ) {
+        var produto = produtoService.atualizarProduto(dto, id, empresaId);
+        if (produto == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não localizado");
+        return ResponseEntity.ok(produto);
     }
 
-    // DeleteProduto
     @DeleteMapping("/deletar/{id}")
     public ResponseEntity<Object> deletarProduto(@PathVariable Long id) {
         var resultado = produtoService.apagarProduto(id);
@@ -62,24 +63,5 @@ public class ProdutoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não localizado");
         }
         return ResponseEntity.ok("Produto deletado");
-    }
-
-    // DeleteLogic
-    @PutMapping("/desativar/{id}")
-    public ResponseEntity<Object> desativarProduto(@PathVariable Long id) {
-        var resultado = produtoService.desativarProduto(id);
-        if (!resultado) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não localizado");
-        }
-        return ResponseEntity.ok("Produto desativado");
-    }
-
-    @PutMapping("/ativar/{id}")
-    public ResponseEntity<Object> ativarProduto(@PathVariable Long id) {
-        var resultado = produtoService.ativarProduto(id);
-        if (!resultado) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não localizado");
-        }
-        return ResponseEntity.ok("Produto ativado");
     }
 }

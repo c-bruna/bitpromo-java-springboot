@@ -1,82 +1,66 @@
 package com.imd.supermercado.services;
 
 import com.imd.supermercado.DTO.ProdutoDTO;
+import com.imd.supermercado.model.EmpresaEntity;
 import com.imd.supermercado.model.ProdutoEntity;
+import com.imd.supermercado.repositories.EmpresaRepository;
 import com.imd.supermercado.repositories.ProdutoRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProdutoService {
+
     @Autowired
-    ProdutoRepository repository;
+    private ProdutoRepository produtoRepository;
 
-    public ProdutoEntity salvarProduto(ProdutoDTO produtoDTO) {
-        ProdutoEntity produtoEntity = new ProdutoEntity();
-        BeanUtils.copyProperties(produtoDTO, produtoEntity);
-        return repository.save(produtoEntity);
-    }
+    @Autowired
+    private EmpresaRepository empresaRepository;
 
-    public ProdutoEntity atualizarProduto(ProdutoDTO produtoDTO, Long id) {
-        Optional<ProdutoEntity> produto = repository.findById(id);
-        if (produto.isEmpty()) {
-            return null;
-        }
-        ProdutoEntity produtoEntity = produto.get();
-        produtoEntity.atualizarProduto(produtoDTO);
-        return repository.save(produtoEntity);
-    }
+    public ProdutoEntity salvarProduto(ProdutoDTO dto, Long empresaId) {
 
-    public boolean apagarProduto(Long id) {
-        Optional<ProdutoEntity> produto = repository.findById(id);
-        if (produto.isEmpty()) {
-            return false;
-        }
-        repository.delete(produto.get());
-        return true;
+        EmpresaEntity empresa = empresaRepository.findById(empresaId)
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+
+        ProdutoEntity novoProduto = new ProdutoEntity(dto, empresa);
+
+        return produtoRepository.save(novoProduto);
     }
 
     public ProdutoEntity buscarProduto(Long id) {
-        Optional<ProdutoEntity> produto = repository.findById(id);
-        return produto.orElse(null);
-    }
-
-    public List<ProdutoEntity> buscarProdutosAtivos() {
-        return repository.findAllByAtivoTrue();
+        return produtoRepository.findById(id).orElse(null);
     }
 
     public List<ProdutoEntity> buscarProdutos() {
-        return repository.findAll();
+        return produtoRepository.findAll();
     }
 
-    public boolean ativarProduto(Long id) {
-        Optional<ProdutoEntity> produto = repository.findById(id);
-        if (produto.isEmpty()) {
+    public List<ProdutoEntity> buscarProdutosPorEmpresa(Long empresaId) {
+        return produtoRepository.findAllByEmpresaId(empresaId);
+    }
+
+    public ProdutoEntity atualizarProduto(ProdutoDTO dto, Long id, Long empresaId) {
+
+        ProdutoEntity produto = produtoRepository.findById(id).orElse(null);
+        if (produto == null) {
+            return null;
+        }
+
+        EmpresaEntity empresa = empresaRepository.findById(empresaId)
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+
+        produto.atualizarProduto(dto, empresa);
+
+        return produtoRepository.save(produto);
+    }
+
+    public boolean apagarProduto(Long id) {
+        if (!produtoRepository.existsById(id)) {
             return false;
         }
-        ProdutoEntity produtoEntity = produto.get();
-        produtoEntity.ativar();
-        repository.save(produtoEntity);
+        produtoRepository.deleteById(id);
         return true;
-    }
-
-    public boolean desativarProduto(Long id) {
-        Optional<ProdutoEntity> produto = repository.findById(id);
-        if (produto.isEmpty()) {
-            return false;
-        }
-        ProdutoEntity produtoEntity = produto.get();
-        produtoEntity.desativar();
-        repository.save(produtoEntity);
-        return true;
-    }
-
-    public ProdutoRepository repository() {
-        return repository;
     }
 }
-
