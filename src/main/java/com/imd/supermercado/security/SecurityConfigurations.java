@@ -1,5 +1,7 @@
 package com.imd.supermercado.security;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -20,57 +25,37 @@ public class SecurityConfigurations {
 
     @Autowired
     SecurityFilter securityFilter;
-     @Bean
+
+    @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // habilita CORS
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                .authorizeHttpRequests(autorize -> autorize
+                        .requestMatchers(HttpMethod.PUT , "/cliente/desativar/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT , "/cliente/ativar/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/produto/salvar").hasAnyRole("ADMIN", "EMPRESA")
+                        .requestMatchers(HttpMethod.PUT, "/produto/atualizar").hasAnyRole("ADMIN", "EMPRESA")
+                        .requestMatchers(HttpMethod.DELETE, "/produto/deletar").hasAnyRole("ADMIN", "EMPRESA")
+                        .anyRequest().permitAll() 
                 )
-
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-    // @Bean
-    // SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-    //     return httpSecurity
-    //             .csrf(csrf -> csrf.disable())
-    //             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-    //             .authorizeHttpRequests(autorize -> autorize
-    //                     .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-    //                     .requestMatchers(HttpMethod.POST, "/auth/registrar").permitAll()
-    //                     .requestMatchers(HttpMethod.POST , "/cliente/salvar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT , "/cliente/atualizar/").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.DELETE , "/cliente/deletar/").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT , "/cliente/desativar/").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT , "/cliente/ativar/").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.GET, "/cliente").hasAnyRole("ADMIN", "USER")
-    //                     .requestMatchers(HttpMethod.GET, "/cliente/clientes").hasAnyRole("ADMIN", "USER")
-    //                     .requestMatchers(HttpMethod.GET, "/cliente/clientes_ativos").hasAnyRole("ADMIN", "USER")
-    //                     .requestMatchers(HttpMethod.POST, "/produto/salvar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT, "/produto/atualizar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.DELETE, "/produto/deletar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT, "/produto/desativar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT, "/produto/ativar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.GET, "/produto").hasAnyRole("ADMIN", "USER")
-    //                     .requestMatchers(HttpMethod.GET, "/produto/produtos").hasAnyRole("ADMIN", "USER")
-    //                     .requestMatchers(HttpMethod.GET, "/produto/produtos_ativos").hasAnyRole("ADMIN", "USER")
-    //                     .requestMatchers(HttpMethod.POST, "/pedidos/salvar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT, "/pedidos/atualizar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.DELETE, "/pedidos/deletar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT, "/pedidos/desativar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT, "/pedidos/ativar").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT, "/pedidos/adicionar/produtos/").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.PUT, "/pedidos/remover/produtos/").hasRole("ADMIN")
-    //                     .requestMatchers(HttpMethod.GET, "/pedidos").hasAnyRole("ADMIN", "USER")
-    //                     .requestMatchers(HttpMethod.GET, "/pedidos/ativos").hasAnyRole("ADMIN", "USER")
-    //                     .anyRequest().authenticated()
-    //             )
-    //             .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-    //             .build();
-    // }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // seu front-end
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
