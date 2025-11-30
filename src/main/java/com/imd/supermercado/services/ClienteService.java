@@ -2,9 +2,14 @@ package com.imd.supermercado.services;
 
 import com.imd.supermercado.DTO.ClienteDTO;
 import com.imd.supermercado.model.ClienteEntity;
+import com.imd.supermercado.model.UserEntity;
 import com.imd.supermercado.repositories.ClienteRepository;
+import com.imd.supermercado.repositories.UserRepository;
+import com.imd.supermercado.security.RoleEnum;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,11 +20,29 @@ public class ClienteService {
     @Autowired
     ClienteRepository repository;
 
+     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public ClienteEntity salvarCliente(ClienteDTO clienteDTO) {
-        ClienteEntity clienteEntity = new ClienteEntity();
-        BeanUtils.copyProperties(clienteDTO, clienteEntity);
-        return repository.save(clienteEntity);
+
+        ClienteEntity clienteEntity = new ClienteEntity(clienteDTO);
+        BeanUtils.copyProperties(clienteDTO, clienteEntity, "senha"); 
+        clienteEntity = repository.save(clienteEntity);
+
+        UserEntity user = new UserEntity();
+        user.setLogin(clienteDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(clienteDTO.getSenha()));
+        user.setRole(RoleEnum.USER);
+        user.setCliente(clienteEntity);
+
+        userRepository.save(user);
+
+        return clienteEntity;
     }
+
 
     public ClienteEntity atualizarCliente(ClienteDTO clienteDTO, Long id) {
         Optional<ClienteEntity> cliente = repository.findById(id);

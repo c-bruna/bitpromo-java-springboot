@@ -1,12 +1,14 @@
 package com.imd.supermercado.repositories;
 
 import com.imd.supermercado.model.ClienteEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
 public interface ClienteRepository extends JpaRepository<ClienteEntity, Long> {
+
+    boolean existsByCpf(String cpf);
+
+    boolean existsByEmail(String email);
+    
     List<ClienteEntity> findAllByAtivoTrue();
 }
