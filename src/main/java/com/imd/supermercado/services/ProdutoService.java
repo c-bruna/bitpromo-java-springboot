@@ -9,6 +9,11 @@ import com.imd.supermercado.repositories.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import java.util.stream.Collectors;
 
 import java.util.List;
 
@@ -24,7 +29,43 @@ public class ProdutoService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private final String PYTHON_API_URL = "http://localhost:8000/api/v1/insert/sincronizar";
+    public List<ProdutoEntity> buscarProdutosPorSemelhanca(String query) {
+        try {
+            String url = UriComponentsBuilder.fromHttpUrl("http://localhost:8000/api/v1/busca/buscar_semantica")
+                    .queryParam("q", query)
+                    .queryParam("limit", 10)
+                    .queryParam("min_score", 0.3)
+                    .toUriString();
+
+            ResponseEntity<List<ProdutoVector>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<ProdutoVector>>() {}
+            );
+
+            List<ProdutoVector> dtos = response.getBody();
+
+            if (dtos == null || dtos.isEmpty()) {
+                return List.of();
+            }
+
+            return dtos.stream().map(dto -> {
+                ProdutoEntity p = new ProdutoEntity();
+                p.setId(dto.getId());
+                p.setNomeProduto(dto.getNomeProduto());
+                p.setCategoria(dto.getCategoria());
+                p.setPreco(dto.getPreco());
+                p.setImagem(dto.getImagem());
+                p.setLink(dto.getLink());
+                return p;
+            }).collect(Collectors.toList());
+
+        } catch (Exception e) {
+            System.err.println("Erro ao conectar na API Python: " + e.getMessage());
+            return produtoRepository.findByNomeProdutoContainingIgnoreCase(query);
+        }
+    }
 
     public ProdutoEntity salvarProduto(ProdutoDTO dto, Long empresaId) {
 
@@ -98,7 +139,7 @@ public class ProdutoService {
                     produto.getLink()
             );
 
-            restTemplate.postForEntity(PYTHON_API_URL, vectorDto, Void.class);
+            restTemplate.postForEntity("http://localhost:8000/api/v1/insert/sincronizar", vectorDto, Void.class);
             System.out.println("Produto sincronizado com ChromaDB: " + produto.getNomeProduto());
 
         } catch (Exception e) {
