@@ -1,19 +1,18 @@
 package com.imd.supermercado.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProdutoVector {
 
     private Long id;
-
-    @JsonProperty("nome_produto")
     private String nomeProduto;
-
     private String categoria;
     private Double preco;
     private String imagem;
     private String link;
-
+    private Double scoreSimilaridade;
     public ProdutoVector() {}
 
     public ProdutoVector(Long id, String nomeProduto, String categoria, Double preco, String imagem, String link) {
